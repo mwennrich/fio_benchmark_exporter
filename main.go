@@ -429,7 +429,7 @@ func main() {
 
 			log.Printf("Running fio: %s", cmd)
 			cmdParts := strings.Split(cmd, " ")
-			fioCommand := exec.Command(cmdParts[0], cmdParts[1:]...)
+			fioCommand := exec.Command(cmdParts[0], cmdParts[1:]...) // #nosec G204
 			fioStdout, err := fioCommand.StdoutPipe()
 			if err != nil {
 				log.Fatalf("Error creating StdoutPipe: %s", err)
