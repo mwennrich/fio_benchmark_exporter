@@ -1,15 +1,26 @@
-FROM golang:1.16
-MAINTAINER Frank R <12985912+fritchie@users.noreply.github.com>
+FROM golang:1.18-alpine AS build
 
-RUN apt-get update
-RUN apt-get -y install fio
+ENV GO111MODULE=on
+ENV CGO_ENABLED=0
 
-WORKDIR /go/src/fio_benchmark_exporter
-COPY . .
+RUN apk add make binutils git
 
-RUN go get -d -v ./...
-RUN go install -v ./...
+COPY . /app
+WORKDIR /app
+
+
+RUN go build -o fio_benchmark_exporter
+RUN strip fio_benchmark_exporter
+
+FROM alpine:3.16
+
+RUN apk add fio
+
+WORKDIR /
+USER 65534:65534
+
+COPY --from=build /app/fio_benchmark_exporter .
 
 EXPOSE 9996
 
-CMD [ "fio_benchmark_exporter" ]
+ENTRYPOINT [ "./fio_benchmark_exporter" ]
