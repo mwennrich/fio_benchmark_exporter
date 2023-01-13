@@ -353,7 +353,7 @@ func main() {
 	fileSize := flag.String("fileSize", "1G", "size of file to use for benchmark")
 	port := flag.String("port", "9996", "tcp listen port")
 	runOnce := flag.Bool("runOnce", false, "exit after benchmark complete and runOnceWait has expired")
-	runOnceWait := flag.Duration("runOnceWait", 1 * time.Hour, "wait this duration before exiting a runOnce benchmark")
+	runOnceWait := flag.Duration("runOnceWait", 1*time.Hour, "wait this duration before exiting a runOnce benchmark")
 	skipInitialBenchmark := flag.Bool("skipInitialBenchmark", false, "skip initial benchmark when app first starts")
 	statusUpdates := flag.Bool("statusUpdates", false, "update metrics every statusUpdateTime seconds during benchmark")
 	statusUpdateInterval := flag.String("statusUpdateInterval", "30", "metric update interval in seconds when statusUpdates enabled")
@@ -401,7 +401,12 @@ func main() {
 		// create cron if needed
 		if !*runOnce {
 			c := cron.New()
-			_, err := c.AddFunc(*cronSchedule, func() { if len(ch) == 0 { log.Println("Cron sending message to ch"); ch <- struct{}{} }})
+			_, err := c.AddFunc(*cronSchedule, func() {
+				if len(ch) == 0 {
+					log.Println("Cron sending message to ch")
+					ch <- struct{}{}
+				}
+			})
 			if err != nil {
 				log.Fatalf("Invalid cronSchedule: %s: %s\n", *cronSchedule, err)
 			}
@@ -779,5 +784,10 @@ func main() {
 	))
 
 	log.Printf("Listening on :%s\n", *port)
-	log.Fatal(http.ListenAndServe(":"+*port, nil))
+
+	server := &http.Server{
+		Addr:              ":" + *port,
+		ReadHeaderTimeout: 30 * time.Second,
+	}
+	log.Fatal(server.ListenAndServe())
 }
