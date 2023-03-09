@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: fio-benchmark-exporter
-        image: "fritchie/fio_benchmark_exporter"
+        image: "ghcr.io/mwennrich/fio_benchmark_exporter"
         command: ["fio_benchmark_exporter"]
         args: ["-directory=/mnt/fio-benchmark-exporter"]
         ports:

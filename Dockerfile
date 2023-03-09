@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine AS build
+FROM golang:1.20-alpine AS build
 
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
@@ -12,7 +12,7 @@ WORKDIR /app
 RUN go build -o fio_benchmark_exporter
 RUN strip fio_benchmark_exporter
 
-FROM alpine:3.16
+FROM alpine:3.17
 
 RUN apk add fio
 
