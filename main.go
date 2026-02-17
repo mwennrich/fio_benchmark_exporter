@@ -762,7 +762,7 @@ func main() {
 			}
 			if err := fioCommand.Wait(); err != nil {
 				log.Printf("Fio command error: %s\n", err)
-				for _, m := range strings.Split(string(fioStderrBytes), "\n") {
+				for m := range strings.SplitSeq(string(fioStderrBytes), "\n") {
 					if len(m) > 0 {
 						log.Println(m)
 					}
