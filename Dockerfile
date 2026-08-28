@@ -12,7 +12,7 @@ WORKDIR /app
 RUN go build -o fio_benchmark_exporter
 RUN strip fio_benchmark_exporter
 
-FROM alpine:3.23
+FROM alpine:3.24
 
 RUN apk add fio
 
